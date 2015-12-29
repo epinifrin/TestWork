@@ -1,0 +1,319 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="my-list">
+  <template>
+
+    <style>
+      :host {
+        display: block;
+      }
+      paper-material {
+        background-color: #ffffff;
+      }
+      paper-item {
+        padding-left: 24px;
+        cursor: pointer;
+      }
+      .name-people {
+        margin: 16px 0 16px 16px;
+      }
+      [drawer] {
+        border-left: 1px solid #aaaaaa;
+      }
+      .colums {
+        background-color: white;
+        color: rgba(0, 0, 0, 0.87);
+        padding-left: 48px;
+        border-bottom: 1px solid #ccc;
+      }
+      .colum {
+        width: 300px;
+      }
+      .hide-for-device {
+        text-align: center;
+      }
+      .student-cart, .student-cart paper-toolbar {
+        background-color: #F5F5F5;
+        color: rgba(0, 0, 0, 0.87);
+      }
+      .student-cart paper-toolbar {
+        border-bottom: 1px solid #ccc;
+      }
+      .student-cart-content {
+        padding: 16px 16px 120px 16px;
+      }
+      .student-cart-content paper-dropdown-menu {
+        width: 240px;
+      }
+      .mobile-column {
+        display: none;
+      }
+      @media (max-width: 600px) {
+        .hide-for-device {
+          display: none;
+        }
+        .mobile-column {
+          display: block;
+        }
+      }
+
+      #dialogSettings {
+        background-color: white;
+      }
+      #dialogSettings [dialog-dismiss]{
+        color: rgba(0, 0, 0, 0.87);
+      }
+      #dialogSettings paper-input {
+        margin: 0 24px;
+      }
+    </style>
+
+    <iron-ajax
+      auto
+      id="ajaxData"
+      url="{{dataUrl}}"
+      handle-as="json"
+      last-response="{{data}}"
+      on-response="responseData"
+      debounce-duration="300">
+    </iron-ajax>
+
+    <iron-ajax
+      id="ajaxSave"
+      url="{{dataUrl}}"
+      method="POST"
+      handle-as="json"
+      body="{{data}}"
+      debounce-duration="300">
+    </iron-ajax>
+
+    <paper-dialog id="dialogSettings" modal>
+      <h2>{{data.title}}</h2>
+      <paper-dialog-scrollable>
+        <paper-input
+          label="Проходной бал"
+          type="number"
+          max="5" min="1"
+          auto-validate
+          maxlength="1"
+          step="0.1"
+          error-message="Недопустимое значение"
+          invalid="{{tmpData.validEstimate}}"
+          value="{{tmpData.estimate::input}}">
+        </paper-input>
+        <paper-input
+          label="Небыл неуваж. %"
+          type="number"
+          max="99" min="1"
+          maxlength="2"
+          auto-validate
+          error-message="Допустимо от 1 до 99"
+          invalid="{{tmpData.validPassed}}"
+          value="{{tmpData.passed::input}}">
+        </paper-input>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Отмена</paper-button>
+        <paper-button dialog-confirm on-tap="applySettings">Применить</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-drawer-panel right-drawer class="layout inline" drawer-width="280px">
+      <div drawer>
+        <paper-header-panel class="student-cart" mode="waterfall">
+          <paper-toolbar><div>Карточка студента</div></paper-toolbar>
+          <div class="student-cart-content">
+            <div>{{selectStudent.name}}</div>
+            <template is="dom-repeat" items="{{selectStudent.estimates}}">
+                <div>
+                  <paper-dropdown-menu label="Оценка" vertical-align="bottom" >
+                    <paper-tabs class="dropdown-content" attr-for-selected="value" selected="{{item.value}}">
+                      <paper-tab value=""></paper-tab>
+                      <paper-tab value="1">1</paper-tab>
+                      <paper-tab value="2">2</paper-tab>
+                      <paper-tab value="3">3</paper-tab>
+                      <paper-tab value="4">4</paper-tab>
+                      <paper-tab value="5">5</paper-tab>
+                      <paper-tab value="н">н</paper-tab>
+                      <paper-tab value="нн">нн</paper-tab>
+                    </paper-tabs>
+                  </paper-dropdown-menu>
+                </div>
+            </template>
+          </div>
+        </paper-header-panel>
+      </div>
+
+      <paper-header-panel main mode="waterfall">
+        <paper-toolbar class="colums">
+          <div class="colum">Студент</div>
+          <div class="colum hide-for-device">Средняя оценка</div>
+          <div class="colum hide-for-device">Не был неуваж.(нн)</div>
+          <div class="colum hide-for-device">Зачет</div>
+        </paper-toolbar>
+        <div>
+          <template is="dom-repeat" items="{{data.students}}" sort="_sortList">
+            <paper-item on-tap="clickStudent">
+              <div class="hide-for-device"><iron-icon icon="account-circle"></iron-icon></div>
+              <div class="mobile-column"><iron-icon icon$="{{iconStudent(item.estimates, selectStudent.estimates.*, data.estimate, data.passed)}}"></iron-icon></div>
+              <div class="name-people colum">{{item.name}}</div>
+              <div class="colum hide-for-device">{{avarageEstimate(item.estimates, selectStudent.estimates.*)}}</div>
+              <div class="colum hide-for-device">{{admission(item.estimates, selectStudent.estimates.*)}}</div>
+              <div class="colum hide-for-device"><iron-icon icon="check" hidden$="{{!checkStudent(item.estimates, selectStudent.estimates.*, data.estimate, data.passed)}}"></iron-icon></div>
+              <div class="flex"></div>
+              <paper-icon-button icon="info" paper-drawer-toggle></paper-icon-button>
+            </paper-item>
+          </template>
+        </div>
+      </paper-header-panel>
+
+    </paper-drawer-panel>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+
+        is: 'my-list',
+
+        properties: {
+          dataUrl: String,
+          selectStudent: {
+            type: Object,
+            notify: true,
+            value: function(){return {estimates: []};}
+          },
+          tmpData: {
+            type: Object,
+            notify: true,
+            value: function() {return {
+              estimate: '',
+              passed: '',
+              validEstimate: false,
+              validPassed: false
+            };}
+          },
+          dataRoute: String
+        },
+
+        listeners: {
+          'openSettings': 'openDialogSettings',
+          'saveSettings': 'saveSettings'
+        },
+
+        attributeChanged: function() {
+          if (this.data) {
+            this.computedTitle(this.data.estimate, this.data.passed, this.data.title)
+          }
+        },
+
+        saveSettings: function() {
+          this.$.ajaxSave.generateRequest();
+        },
+
+        openDialogSettings: function() {
+          this.set('tmpData.estimate', this.data.estimate);
+          this.set('tmpData.passed', this.data.passed);
+          this.$.dialogSettings.open();
+        },
+
+        ready: function() {
+        },
+
+        observers: [
+          'computedTitle(data.estimate, data.passed, data.title)'
+        ],
+
+        iconStudent: function(estimates) {
+          if (this.avarageEstimate(estimates) >= this.data.estimate
+            && this.admission(estimates) <= this.data.passed) {
+            return 'check';
+          }
+          else {
+            return 'none';
+          }
+        },
+
+        checkStudent: function(estimates) {
+          return (this.avarageEstimate(estimates) >= this.data.estimate
+                  && this.admission(estimates) <= this.data.passed);
+        },
+
+        applySettings: function(e) {
+          if (this.tmpData.validEstimate || this.tmpData.validPassed) {
+            e.stopPropagation();
+          }
+          else {
+            this.set('data.estimate', this.tmpData.estimate);
+            this.set('data.passed', this.tmpData.passed);
+          }
+        },
+
+        indexAdd: function(index) {
+          return index+1;
+        },
+
+        admission: function(estimates) {
+          var count = 0;
+          for (var i = 0; i < estimates.length; i++) {
+            if (estimates[i].value == "нн") {
+              count++;
+            }
+          }
+          return (count != 0 ? ((count / estimates.length * 100).toFixed(2) + "%") : '');
+        },
+
+        avarageEstimate: function(estimates) {
+          var avarage = 0;
+          var count = 0;
+          for (var i = 0; i < estimates.length; i++) {
+            if (estimates[i].value != "" && estimates[i].value != "н" && estimates[i].value != "нн"){
+              avarage += parseInt(estimates[i].value);
+              count++;
+            }
+          }
+          if (count != 0) {
+            return (avarage / count).toFixed(2);
+          }
+          else {
+            return '';
+          }
+        },
+
+        responseData: function() {
+          this.set('tmpData.estimate', this.data.estimate);
+          this.set('tmpData.passed', this.data.passed);
+        },
+
+        computedTitle: function(estimate, passed) {
+          if (app.route == this.dataRoute) {
+            app.title = this.data.title;
+          }
+          app.subtitle = 'Проходной бал/нн: ' + estimate + "/" + passed + "%";
+        },
+
+        clickStudent: function(e) {
+          this.selectStudent = e.model.item;
+        },
+
+        _sortList: function(first, second) {
+          if (first.name == second.name) {
+            return 0;
+          }
+          return first.name < second.name ? -1 : 1;
+        }
+      });
+    })();
+  </script>
+</dom-module>

@@ -1,0 +1,84 @@
+{
+  "students": [
+    {
+      "id": "1",
+      "name": "Иванов Иван",
+      "estimates": [
+        {"value": "5"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Петров Петр",
+      "estimates": [
+        {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Сидорова Анна",
+      "estimates": [
+        {"value": "4"}, {"value": "4"}, {"value": "5"}, {"value": "5"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Зайцева Полина",
+      "estimates": [
+        {"value": "4"}, {"value": "нн"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "нн"}, {"value": "4"}, {"value": ""}, {"value": "4"}
+      ]
+    },
+    {
+      "id": "5",
+      "name": "Волков Сергей",
+      "estimates": [
+        {"value": "4"}, {"value": "4"}, {"value": "5"}, {"value": "4"}, {"value": "5"}, {"value": "4"}, {"value": "5"}, {"value": "4"}, {"value": "4"}
+      ]
+    },
+    {
+      "id": "6",
+      "name": "Смирнова Ирина",
+      "estimates": [
+        {"value": "5"}, {"value": "4"}, {"value": "4"}, {"value": "5"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "5"}, {"value": "5"}
+      ]
+    },
+    {
+      "id": "7",
+      "name": "Серов Андрей",
+      "estimates": [
+        {"value": "4"}, {"value": "3"}, {"value": "нн"}, {"value": "4"}, {"value": ""}, {"value": "4"}, {"value": "4"}, {"value": "3"}, {"value": "4"}
+      ]
+    },
+    {
+      "id": "8",
+      "name": "Пушкина Екатерина",
+      "estimates": [
+        {"value": "4"}, {"value": "5"}, {"value": "5"}, {"value": "4"}, {"value": "5"}, {"value": "5"}, {"value": "5"}, {"value": "4"}, {"value": "4"}
+      ]
+    },
+    {
+      "id": "9",
+      "name": "Прокофьев Александр",
+      "estimates": [
+        {"value": "4"}, {"value": "4"}, {"value": "3"}, {"value": "4"}, {"value": "3"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}
+      ]
+    },
+    {
+      "id": "10",
+      "name": "Шаров Василий",
+      "estimates": [
+        {"value": "4"}, {"value": "5"}, {"value": "4"}, {"value": "4"}, {"value": "5"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}
+      ]
+    },
+    {
+      "id": "11",
+      "name": "Бобров Генадий",
+      "estimates": [
+        {"value": "4"}, {"value": "3"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "4"}, {"value": "5"}, {"value": "4"}
+      ]
+    }
+  ],
+  "title": "Высшая математика",
+  "passed": "10",
+  "estimate": "4.1"
+}
