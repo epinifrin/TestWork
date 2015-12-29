@@ -52,7 +52,7 @@ Rob Dodson has a fantastic [PolyCast video](https://www.youtube.com/watch?v=xz-y
 With Node.js installed, run the following one liner from the root of your Polymer Starter Kit download:
 
 ```sh
-npm install -g gulp bower && npm install && bower install && run-script start
+npm install -g gulp bower && npm install && bower install && npm run-script start
 ```
 
 #### Prerequisites (for everyone)
